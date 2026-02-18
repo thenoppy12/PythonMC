@@ -1,4 +1,4 @@
-# <center>PythonMC
+# <center>PythonMC</center>
 
 ### This is a simple framework (not API) to reproduce Minecraft: Java Edition protocol
 

@@ -4,7 +4,8 @@ class MinecraftTypes:
     """Static methods for encoding/decoding Minecraft primitives."""
     
     @staticmethod
-    def read_varint(stream):
+    def read_varint(stream) -> int:
+        """Reads an integer as a VarInt bytes object."""
         val = 0
         shift = 0
         while True:
@@ -17,7 +18,7 @@ class MinecraftTypes:
             shift += 7
 
     @staticmethod
-    def write_varint(val):
+    def write_varint(val: int) -> bytes:
         """Encodes an integer as a VarInt bytes object."""
         total = b''
         while True:
@@ -30,7 +31,7 @@ class MinecraftTypes:
                 return total
 
     @staticmethod
-    def read_string(stream):
+    def read_string(stream) -> str:
         """Reads a VarInt length, then that many bytes as UTF-8."""
         length = MinecraftTypes.read_varint(stream)
         data = stream.read(length)
@@ -38,26 +39,25 @@ class MinecraftTypes:
         return data.decode('utf-8')
 
     @staticmethod
-    def write_string(text):
+    def write_string(text) -> bytes:
         """Encodes a string with VarInt length prefix."""
         data = text.encode('utf-8')
         return MinecraftTypes.write_varint(len(data)) + data
 
     @staticmethod
-    def read_ushort(stream):
-        """Reads an Unsigned Short (2 bytes, Big Endian). e.g. Port."""
+    def read_ushort(stream) -> int:
+        """Reads a 2 bytes + Big Endian Unsigned Short (16-bit Integer)."""
         return struct.unpack('>H', stream.read(2))[0]
 
     @staticmethod
-    def read_long(stream):
-        # 1. Read 8 bytes
+    def read_long(stream) -> int:
+        """Reads a 8-Bytes + Big Endian Long."""
         data = stream.read(8)
         if len(data) < 8:
             raise struct.error(f"read_long expected 8 bytes, got {len(data)}. Stream pos: {stream.tell()}")
-        # 3. Unpack
         return struct.unpack('>q', data)[0]
     
     @staticmethod
-    def write_long(val):
-        """Writes a Long (8 bytes, Big Endian)."""
+    def write_long(val) -> bytes:
+        """Writes a 8-Bytes + Big Endian Long."""
         return struct.pack('>q', val)
